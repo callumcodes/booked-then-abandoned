@@ -1,6 +1,7 @@
 val Http4sVersion = "0.18.0"
 val Specs2Version = "4.0.2"
 val LogbackVersion = "1.2.3"
+val circeVersion = "0.9.1"
 
 lazy val root = (project in file("."))
   .settings(
@@ -13,7 +14,8 @@ lazy val root = (project in file("."))
       "org.http4s"      %% "http4s-circe"        % Http4sVersion,
       "org.http4s"      %% "http4s-dsl"          % Http4sVersion,
       "org.specs2"     %% "specs2-core"          % Specs2Version % "test",
-      "ch.qos.logback"  %  "logback-classic"     % LogbackVersion
+      "ch.qos.logback"  %  "logback-classic"     % LogbackVersion,
+      "io.circe"        %% "circe-generic"       % circeVersion
     )
   )
 

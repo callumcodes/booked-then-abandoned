@@ -4,6 +4,7 @@ import cats.effect.IO
 import org.http4s._
 import org.http4s.implicits._
 import org.specs2.matcher.MatchResult
+import uk.gov.hmrc.bookedthenabandoned.services.Room
 
 class RoomMonitorSpec extends org.specs2.mutable.Specification {
   "RoomMonitor Hello" >> {
@@ -22,6 +23,17 @@ class RoomMonitorSpec extends org.specs2.mutable.Specification {
     }
 
     "return log info" >> {
+      roomUriReturnLogInfo()
+    }
+  }
+
+
+  "RoomMonitor Rooms" >> {
+    "return 200" >> {
+      roomUriReturns200()
+    }
+
+    "return rooms" >> {
       roomUriReturnLogInfo()
     }
   }
@@ -49,4 +61,20 @@ class RoomMonitorSpec extends org.specs2.mutable.Specification {
     retRoom.as[String].unsafeRunSync() must startWith("Logged movement in BP9001")
 
 
+  private[this] val retRooms: Response[IO] = {
+    val getHW = Request[IO](Method.POST, Uri.uri("/rooms"))
+    RoomMonitorServer.service.orNotFound(getHW).unsafeRunSync()
+  }
+
+  private[this] def roomsUriReturns200(): MatchResult[Status] =
+    retRooms.status must beEqualTo(Status.Ok)
+
+  private[this] def roomsUriReturnRooms() = {
+    val testList = List(
+      Room("BP9001"),
+      Room("BP9002"),
+      Room("Pink Show and Tell")
+    )
+    retRooms.as[String].unsafeRunSync() must beEqualTo(testList)
+  }
 }
