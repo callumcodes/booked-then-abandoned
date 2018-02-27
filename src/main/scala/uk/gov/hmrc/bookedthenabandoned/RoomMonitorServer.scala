@@ -10,7 +10,7 @@ import org.http4s.HttpService
 import org.http4s.circe._
 import org.http4s.dsl.Http4sDsl
 import org.http4s.server.blaze.BlazeBuilder
-import uk.gov.hmrc.bookedthenabandoned.models.RoomRequest
+import uk.gov.hmrc.bookedthenabandoned.models.{RoomRequest, RoomResponse}
 import uk.gov.hmrc.bookedthenabandoned.services.{Room, RoomService}
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -21,7 +21,7 @@ object RoomMonitorServer extends StreamApp[IO] with Http4sDsl[IO] {
     case GET -> Root / "hello" / name =>
       Ok(Json.obj("message" -> Json.fromString(s"Hello, ${name}")))
     case GET -> Root / "rooms" => {
-      Ok(RoomService.rooms.asJson)
+      Ok(RoomResponse(RoomService.rooms).asJson)
     }
     case req@PUT -> Root / "room" / roomNumber =>
       req.decodeJson[RoomRequest].flatMap { request =>
