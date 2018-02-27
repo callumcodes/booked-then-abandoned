@@ -13,6 +13,7 @@ import org.http4s.server.blaze.BlazeBuilder
 import uk.gov.hmrc.bookedthenabandoned.services.RoomService
 
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.util.Try
 
 object RoomMonitorServer extends StreamApp[IO] with Http4sDsl[IO] {
   val service = HttpService[IO] {
@@ -28,7 +29,7 @@ object RoomMonitorServer extends StreamApp[IO] with Http4sDsl[IO] {
 
   def stream(args: List[String], requestShutdown: IO[Unit]) =
     BlazeBuilder[IO]
-      .bindHttp(5000, "0.0.0.0")
+      .bindHttp(Try(System.getProperty("http.port").toInt).getOrElse(8080), "0.0.0.0")
       .mountService(service, "/")
       .serve
 }
