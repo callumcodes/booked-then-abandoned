@@ -18,7 +18,9 @@ lazy val root = (project in file("."))
       "io.circe"        %% "circe-generic"       % circeVersion,
       "io.circe"        %% "circe-java8" % circeVersion,
       "org.http4s" %% "http4s-json4s-native" % Http4sVersion,
-      "org.http4s" %% "http4s-json4s-jackson" % Http4sVersion
+      "org.http4s" %% "http4s-json4s-jackson" % Http4sVersion,
+      "com.google.api-client" % "google-api-client" % "1.23.0",
+      "com.google.apis" % "google-api-services-calendar" % "v3-rev292-1.23.0"
     )
   )
 

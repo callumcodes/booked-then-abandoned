@@ -16,7 +16,12 @@ import uk.gov.hmrc.bookedthenabandoned.services.{Room, RoomService}
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.util.Try
 
-object RoomMonitorServer extends StreamApp[IO] with Http4sDsl[IO] {
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
+
+trait Logging { protected lazy val log = LoggerFactory.getLogger(this.getClass) }
+
+object RoomMonitorServer extends StreamApp[IO] with Http4sDsl[IO] with Logging {
   val service = HttpService[IO] {
     case GET -> Root / "hello" / name =>
       Ok(Json.obj("message" -> Json.fromString(s"Hello, ${name}")))
@@ -29,6 +34,19 @@ object RoomMonitorServer extends StreamApp[IO] with Http4sDsl[IO] {
         RoomService.update(Room(roomNumber, instant))
         Ok(s"Logged movement in $roomNumber at $instant")
       }
+    case GET -> Root / "events" => {
+
+      val calendarObject = new GoogleCredentialSetup()
+      log.info(s"events ${Calendar.getEvents}")
+      Ok(Calendar.getEvents.toString)
+    }
+    case GET -> Root / "events" / id => {
+
+      val calendarObject = new GoogleCredentialSetup()
+      log.info(s"event ${Calendar.getEvent(eventId = id)}")
+      Ok(Calendar.getEvents.toString)
+    }
+
   }
 
   def stream(args: List[String], requestShutdown: IO[Unit]) =
