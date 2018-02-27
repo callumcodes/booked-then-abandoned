@@ -1,6 +1,7 @@
 package uk.gov.hmrc.bookedthenabandoned.services
 
-import java.time.{Instant}
+import java.time.Instant
+import java.time.temporal.TemporalAmount
 
 import cats.effect.IO
 import io.circe._
@@ -14,25 +15,27 @@ import scala.collection.mutable
 trait RoomService {
   def rooms: List[Room]
 
-  def update(room: Room): Unit
+  def update(id: String, lastUsed: Instant): Unit
 }
 
 object RoomService extends RoomService {
 
   private val roomsStore = mutable.Map[String, Instant]()
 
+  private def checkInUse(instant: Instant): Boolean = instant.isAfter(Instant.now().minusSeconds(5 * 60))
+
   def rooms: List[Room] = {
     roomsStore.map {
-      case (s, d) => Room(s, d)
+      case (s, d) => Room(s, d, checkInUse(d))
     }.toList
   }
 
-  override def update(room: Room): Unit = {
-    roomsStore += (room.id -> room.lastUsed)
+  override def update(id: String, lastUsed: Instant): Unit = {
+    roomsStore += (id -> lastUsed)
   }
 }
 
-case class Room(id: String, lastUsed: Instant)
+case class Room(id: String, lastUsed: Instant, inUse: Boolean)
 
 object Room {
   implicit val jsonDecoder: Decoder[Room] = deriveDecoder[Room]

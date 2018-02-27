@@ -31,11 +31,10 @@ object RoomMonitorServer extends StreamApp[IO] with Http4sDsl[IO] with Logging {
     case req@PUT -> Root / "room" / roomNumber =>
       req.decodeJson[RoomRequest].flatMap { request =>
         val instant = Instant.ofEpochSecond(request.lastUsed)
-        RoomService.update(Room(roomNumber, instant))
+        RoomService.update(roomNumber, instant)
         Ok(s"Logged movement in $roomNumber at $instant")
       }
     case GET -> Root / "events" => {
-
       val calendarObject = new GoogleCredentialSetup()
       log.info(s"events ${Calendar.getEvents}")
       Ok(Calendar.getEvents.toString)
