@@ -1,6 +1,6 @@
 #!/bin/bash
 
-array=(pink red teal green orange)
+array=(Pink Red Teal Green Orange)
 
 for color in "${array[@]}" 
 do
