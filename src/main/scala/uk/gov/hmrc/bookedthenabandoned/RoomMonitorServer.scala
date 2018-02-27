@@ -22,7 +22,7 @@ object RoomMonitorServer extends StreamApp[IO] with Http4sDsl[IO] {
     case GET -> Root / "rooms" => {
       Ok(RoomService.rooms.asJson)
     }
-    case POST -> Root / "room" / roomNumber =>
+    case req @ PUT -> Root / "room" / roomNumber =>
       val now = LocalDateTime.now()
       RoomService.update(Room(roomNumber, now))
       Ok(s"Logged movement in $roomNumber at $now")
