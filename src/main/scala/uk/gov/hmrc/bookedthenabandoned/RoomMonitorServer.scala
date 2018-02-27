@@ -10,7 +10,7 @@ import org.http4s._
 import org.http4s.circe._
 import org.http4s.dsl.Http4sDsl
 import org.http4s.server.blaze.BlazeBuilder
-import uk.gov.hmrc.bookedthenabandoned.services.RoomService
+import uk.gov.hmrc.bookedthenabandoned.services.{Room, RoomService}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.util.Try
@@ -24,6 +24,7 @@ object RoomMonitorServer extends StreamApp[IO] with Http4sDsl[IO] {
     }
     case POST -> Root / "room" / roomNumber =>
       val now = LocalDateTime.now()
+      RoomService.update(Room(roomNumber, now))
       Ok(s"Logged movement in $roomNumber at $now")
   }
 
