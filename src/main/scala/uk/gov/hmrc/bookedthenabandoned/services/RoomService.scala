@@ -1,6 +1,6 @@
 package uk.gov.hmrc.bookedthenabandoned.services
 
-import java.time.{LocalDate, LocalDateTime}
+import java.time.{Instant}
 
 import cats.effect.IO
 import io.circe._
@@ -19,7 +19,7 @@ trait RoomService {
 
 object RoomService extends RoomService {
 
-  private val roomsStore = mutable.Map[String, LocalDateTime]()
+  private val roomsStore = mutable.Map[String, Instant]()
 
   def rooms: List[Room] = {
     roomsStore.map {
@@ -32,7 +32,7 @@ object RoomService extends RoomService {
   }
 }
 
-case class Room(id: String, lastUsed: LocalDateTime)
+case class Room(id: String, lastUsed: Instant)
 
 object Room {
   implicit val jsonDecoder: Decoder[Room] = deriveDecoder[Room]

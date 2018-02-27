@@ -16,7 +16,9 @@ lazy val root = (project in file("."))
       "org.specs2"     %% "specs2-core"          % Specs2Version % "test",
       "ch.qos.logback"  %  "logback-classic"     % LogbackVersion,
       "io.circe"        %% "circe-generic"       % circeVersion,
-      "io.circe"        %% "circe-java8" % circeVersion
+      "io.circe"        %% "circe-java8" % circeVersion,
+      "org.http4s" %% "http4s-json4s-native" % Http4sVersion,
+      "org.http4s" %% "http4s-json4s-jackson" % Http4sVersion
     )
   )
 

@@ -1,15 +1,16 @@
 package uk.gov.hmrc.bookedthenabandoned
 
-import java.time.LocalDateTime
+import java.time.Instant
 
 import cats.effect.IO
 import fs2.StreamApp
 import io.circe._
 import io.circe.syntax._
-import org.http4s._
+import org.http4s.HttpService
 import org.http4s.circe._
 import org.http4s.dsl.Http4sDsl
 import org.http4s.server.blaze.BlazeBuilder
+import uk.gov.hmrc.bookedthenabandoned.models.RoomRequest
 import uk.gov.hmrc.bookedthenabandoned.services.{Room, RoomService}
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -22,10 +23,12 @@ object RoomMonitorServer extends StreamApp[IO] with Http4sDsl[IO] {
     case GET -> Root / "rooms" => {
       Ok(RoomService.rooms.asJson)
     }
-    case req @ PUT -> Root / "room" / roomNumber =>
-      val now = LocalDateTime.now()
-      RoomService.update(Room(roomNumber, now))
-      Ok(s"Logged movement in $roomNumber at $now")
+    case req@PUT -> Root / "room" / roomNumber =>
+      req.decodeJson[RoomRequest].flatMap { request =>
+        val instant = Instant.ofEpochSecond(request.lastUsed)
+        RoomService.update(Room(roomNumber, instant))
+        Ok(s"Logged movement in $roomNumber at $instant")
+      }
   }
 
   def stream(args: List[String], requestShutdown: IO[Unit]) =
