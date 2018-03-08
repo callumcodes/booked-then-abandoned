@@ -27,7 +27,7 @@ object RoomService extends RoomService {
   def rooms: List[Room] = {
     roomsStore.map {
       case (s, d) => Room(s, d, checkInUse(d))
-    }.toList
+    }.filterNot(_.id == "").toList
   }
 
   override def update(id: String, lastUsed: Instant): Unit = {
